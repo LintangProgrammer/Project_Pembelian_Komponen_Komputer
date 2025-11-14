@@ -5,12 +5,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Komponen extends Model
 {
-    protected $table = 'komponen';
+    protected $table = 'komponens';
     protected $fillable = ['nama_komponen', 'stok', 'harga', 'kategori_id'];
 
     public function kategori()
     {
-        return $this->belongsTo(Komponen::class, 'kategori_id');
+        return $this->belongsTo(Kategori::class, 'id_kategori');
     }
 
     public function pembelian()

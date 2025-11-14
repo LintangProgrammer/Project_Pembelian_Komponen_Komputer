@@ -9,23 +9,19 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-   public function up()
-{
-    Schema::create('supplier', function (Blueprint $table) {
-        $table->id();
-        $table->string('nama_supplier');
-        $table->string('alamat');
-        $table->string('telepon');
-        $table->timestamps();
-    });
-}
-
+    public function up(): void
+    {
+        Schema::create('pembelians', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+        });
+    }
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('suppliers');
+        Schema::dropIfExists('pembelians');
     }
 };

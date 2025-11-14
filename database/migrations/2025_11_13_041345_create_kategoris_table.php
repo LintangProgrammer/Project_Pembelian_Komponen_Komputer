@@ -16,6 +16,8 @@ return new class extends Migration
     $table->string('nama_kategori');
     $table->timestamps();
 });
+
+
     
     }
 
@@ -24,7 +26,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kategoriss');
+        Schema::dropIfExists('kategoris');
     }
 };
 
