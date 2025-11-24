@@ -33,7 +33,7 @@ class PembelianController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kode_pembelian' => 'required|unique:pembelian',
+            'kode_pembelian' => 'required|unique:pembelians',
             'tanggal' => 'required|date',
             'supplier_id' => 'required',
         ]);

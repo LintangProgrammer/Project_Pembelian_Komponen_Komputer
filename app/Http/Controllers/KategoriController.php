@@ -26,6 +26,7 @@ class KategoriController extends Controller
 
     public function edit(Kategori $kategori)
     {
+
         return view('kategori.edit', compact('kategori'));
     }
 

@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 
 @section('content')
     <div class="container mt-4">
@@ -7,7 +7,7 @@
                 <h4>Edit Kategori</h4>
             </div>
             <div class="card-body">
-                <form action="{{ route('kategori.update', $kategori->id) }}" method="POST">
+                <form action="{{ route('kategori.update', $kategori->id) }}" method="PUT">
                     @csrf
                     @method('PUT')
 

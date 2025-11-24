@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.dashboard')
 @section('content')
 <div class="container py-4">
     <h3>Detail Pembelian</h3>
