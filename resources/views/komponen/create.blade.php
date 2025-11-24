@@ -1,134 +1,39 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h3 class="mb-4">Tambah Transaksi Baru</h3>
+    <div class="container mt-4">
+        <h3>Tambah Komponen</h3>
 
-        {{-- Notifikasi Error --}}
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <strong>Terjadi kesalahan:</strong>
-                <ul class="mb-0">
-                    @foreach ($errors->all() as $err)
-                        <li>{{ $err }}</li>
+        <form action="{{ route('komponen.store') }}" method="POST" class="mt-3">
+            @csrf
+
+            <div class="mb-3">
+                <label>Nama Komponen</label>
+                <input type="text" name="nama_komponen" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Stok</label>
+                <input type="number" name="stok" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Harga</label>
+                <input type="number" name="harga" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Kategori</label>
+                <select name="id_kategori" class="form-control" required>
+                    <option value="">-- Pilih --</option>
+                    @foreach($kategori as $k)
+                        <option value="{{ $k->id }}">{{ $k->nama_kategori }}</option>
                     @endforeach
-                </ul>
+                </select>
             </div>
-        @endif
 
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <form action="{{ route('komponen.store') }}" method="POST">
-                    @csrf
-
-                    <hr>
-
-                    <h5>Daftar Komponen</h5>
-
-                    <div class="card-body">
-                        <form action="{{ route('komponen.store') }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="mb-3">
-                                <label class="form-label">Nama Komponen</label>
-                                <input type="text" class="form-control @error('nama_komponen') is-invalid @enderror" name="nama_komponen"
-                                    value="{{ old('nama_komponen') }}" placeholder="komponen Name" required>
-                                @error('nama_komponen')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-
-                    {{-- Wrapper Produk --}}
-                    <div id="komponen-wrapper">
-                        <div class="row komponen-item mb-3">
-                            <div class="col-md-5">
-                                <label class="form-label">komponen</label>
-                                <select name="id_komponen[]" class="form-select komponen-select" required>
-                                    <option value="">-- Pilih Kategori --</option>
-                                    @foreach ($komponen as $prod)
-                                        <option value="{{ $prod->id }}" data-harga="{{ $prod->harga }}">
-                                            {{ $prod->nama_kategori }} - Rp{{ number_format($prod->harga, 0, ',', '.') }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label">Jumlah</label>
-                                <input type="number" name="jumlah[]" class="form-control jumlah-input" min="1" value="1"
-                                    required>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label">Subtotal</label>
-                                <input type="text" class="form-control subtotal" readonly value="Rp0">
-                            </div>
-
-                            <div class="col-md-1 d-flex align-items-end">
-                                <button type="button" class="btn btn-danger btn-remove w-100">×</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="text-end mb-3">
-                        <button type="button" class="btn btn-sm btn-secondary" id="btn-add">+ Tambah Produk</button>
-                    </div>
-
-                    <div class="text-end mb-4">
-                        <h5>Total Harga: <span id="totalHarga">Rp0</span></h5>
-                    </div>
-
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary btn-sm">Simpan Transaksi</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+            <button class="btn btn-primary">Simpan</button>
+            <a href="{{ route('komponen.index') }}" class="btn btn-secondary">Kembali</a>
+        </form>
     </div>
-
-    {{-- Script JS --}}
-    <script>
-        function hitungSubtotal() {
-            let total = 0;
-            document.querySelectorAll('.komponen-item').forEach(item => {
-                let select = item.querySelector('.komponen-select');
-                let jumlah = item.querySelector('.jumlah-input');
-                let subtotalInput = item.querySelector('.subtotal');
-
-                let harga = select.selectedOptions[0]?.getAttribute('data-harga') || 0;
-                let sub = parseInt(harga) * parseInt(jumlah.value || 0);
-
-                subtotalInput.value = 'Rp' + sub.toLocaleString('id-ID');
-                total += sub;
-            });
-
-            document.getElementById('totalHarga').innerText = 'Rp' + total.toLocaleString('id-ID');
-        }
-
-        document.addEventListener('input', hitungSubtotal);
-        document.addEventListener('change', hitungSubtotal);
-
-        // Tambah komponen baru
-        document.getElementById('btn-add').addEventListener('click', function () {
-            let wrapper = document.getElementById('komponen-wrapper');
-            let newRow = wrapper.firstElementChild.cloneNode(true);
-
-            newRow.querySelectorAll('input').forEach(i => i.value = i.classList.contains('jumlah-input') ? 1 : 'Rp0');
-            newRow.querySelector('.komponen-select').value = '';
-
-            wrapper.appendChild(newRow);
-        });
-
-        // Hapus komponen
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('btn-remove')) {
-                let items = document.querySelectorAll('.komponen-item');
-                if (items.length > 1) {
-                    e.target.closest('.komponen-item').remove();
-                    hitungSubtotal();
-                }
-            }
-        });
-    </script>
 @endsection

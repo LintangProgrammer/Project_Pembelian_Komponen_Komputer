@@ -10,24 +10,27 @@ class KomponenController extends Controller
 {
     public function index()
     {
+        $kategori = Kategori::all();
         $komponen = Komponen::with(['kategori'])->latest()->get();
-        return view('komponen.index', compact('komponen'));
+        return view('komponen.index', compact('komponen','kategori'));
     }
 
     public function create()
     {
         $komponen = Komponen::all();
-        return view('komponen.create', compact('komponen'));
+        $kategori = Kategori::all();
+        return view('komponen.create', compact( 'kategori','komponen'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_komponen' => 'required',
+          $request->validate([
+            'nama_komponen' => 'required|string',
             'stok'          => 'required|integer|min:0',
             'harga'         => 'required|numeric',
-            'kategori_id'   => 'required|exists:kategoris,id',
+            'id_kategori'   => 'required|exists:kategoris,id',
         ]);
+        Komponen::create($request->all());
         return redirect()->route('komponen.index')->with('success', 'Komponen berhasil disimpan!');
     }
 
@@ -66,7 +69,7 @@ class KomponenController extends Controller
 
     public function destroy($id)
     {
-        $komponen = Komponen::with('kategoris')->findOrFail($id);
+        $komponen = Komponen::with('kategori')->findOrFail($id);
         // Hapus komponen utama
         $komponen->delete();
 

@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('komponens', function (Blueprint $table) {
+        Schema::create('detail_pembelians', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_komponen');
-            $table->integer('stok');
-            $table->decimal('harga', 15, 2);
-            $table->foreignId('id_kategori')->references('id')->on('kategoris')->onDelete('cascade');
+            $table->foreignId('pembelian_id')->constrained('pembelians')->onDelete('cascade');
+            $table->foreignId('komponen_id')->constrained('komponens')->onDelete('cascade');
+            $table->integer('jumlah');
+            $table->decimal('subtotal');
             $table->timestamps();
-         });
+        });
     }
 
     /**
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('komponens');
+        Schema::dropIfExists('detail_pembelians');
     }
 };

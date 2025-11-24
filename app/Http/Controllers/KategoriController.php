@@ -41,4 +41,10 @@ class KategoriController extends Controller
         $kategori->delete();
         return redirect()->route('kategori.index')->with('success', 'Kategori dihapus');
     }
+
+    public function show($id)
+    {
+        $kategori = Kategori::findOrFail($id);
+        return view('kategori.show', compact('kategori'));
+    }
 }

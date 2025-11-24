@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pembelian;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 
 class PembelianController extends Controller
@@ -12,7 +13,8 @@ class PembelianController extends Controller
      */
     public function index()
     {
-        //
+        $pembelian = Pembelian::with('supplier')->latest()->paginate(10);
+        return view('pembelian.index', compact('pembelian'));
     }
 
     /**
@@ -20,7 +22,9 @@ class PembelianController extends Controller
      */
     public function create()
     {
-        //
+        $supplier = Supplier::all();
+        $pembelian = Pembelian::all();
+        return view('pembelian.create', compact('supplier','pembelian'));
     }
 
     /**
@@ -28,7 +32,15 @@ class PembelianController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'kode_pembelian' => 'required|unique:pembelian',
+            'tanggal' => 'required|date',
+            'supplier_id' => 'required',
+        ]);
+
+        Pembelian::create($request->all());
+
+        return redirect()->route('pembelian.index')->with('success', 'Data Pembelian berhasil ditambahkan!');
     }
 
     /**
@@ -36,7 +48,8 @@ class PembelianController extends Controller
      */
     public function show(Pembelian $pembelian)
     {
-        //
+        $pembelian = Pembelian::with('supplier', 'detail_pembelian')->findOrFail($pembelian->id);
+        return view('pembelian.show', compact('pembelian'));
     }
 
     /**
@@ -44,7 +57,9 @@ class PembelianController extends Controller
      */
     public function edit(Pembelian $pembelian)
     {
-        //
+        $pembelian = Pembelian::findOrFail($pembelian->id);
+        $supplier = Supplier::all();
+        return view('pembelian.edit', compact('pembelian, supplier'));
     }
 
     /**
@@ -52,7 +67,17 @@ class PembelianController extends Controller
      */
     public function update(Request $request, Pembelian $pembelian)
     {
-        //
+        $request->validate([
+            'kode_pembelian' => 'required|unique:pembelian,kode_pembelian,' . $pembelian->id,
+            'tanggal' => 'required|date',
+            'supplier_id' => 'required',
+        ]);
+
+        $pembelian = Pembelian::findOrFail($pembelian->id);
+
+        $pembelian->update($request->all());
+
+        return redirect()->route('pembelian.index')->with('success', 'Data Pembelian berhasil diperbarui!');
     }
 
     /**
@@ -60,6 +85,9 @@ class PembelianController extends Controller
      */
     public function destroy(Pembelian $pembelian)
     {
-        //
+        Pembelian::findOrFail($pembelian->id)->delete();
+
+        return redirect()->route('pembelian.index')
+            ->with('success', 'Data pembelian berhasil dihapus');
     }
 }

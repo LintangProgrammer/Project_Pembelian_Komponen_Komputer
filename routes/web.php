@@ -6,6 +6,8 @@ use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\KomponenController;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\DetailPembelianController;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
     return view('home');
@@ -24,3 +26,4 @@ Route::resource('kategori', KategoriController::class);
 Route::resource('supplier', SupplierController::class);
 Route::resource('komponen', KomponenController::class);
 Route::resource('pembelian', PembelianController::class);
+Route::resource('detail_pembelian', DetailPembelianController::class);

@@ -1,66 +1,43 @@
 @extends('layouts.app')
-
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="float-start">
-                            {{ __('komponen') }}
-                        </div>
-                        <div class="float-end">
-                            <a href="{{ route('komponen.create') }}" class="btn btn-sm btn-outline-primary">Tambah Data</a>
-                        </div>
-                    </div>
+    <div class="container mt-4">
 
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Nama</th>
-                                        <th>Stok</th>
-                                        <th>Harga</th>
-
-
-                                        <th>Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @php $no = 1; @endphp
-                                    @forelse ($komponen as $data)
-                                        <tr>
-                                            <td>{{ $no++ }}</td>
-                                            <td>{{ $data->nama_komponen }}</td>
-                                            <td>{{ $data->stok}}</td>
-                                            <td>{!! $data->harga !!}</td>
-                                            <td>
-                                                <form action="{{ route('komponen.destroy', $data->id) }}" method="POST">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <a href="{{ route('komponen.show', $data->id) }}"
-                                                        class="btn btn-sm btn-outline-dark">Show</a> |
-                                                    <a href="{{ route('komponen.edit', $data->id) }}"
-                                                        class="btn btn-sm btn-outline-success">Edit</a> |
-                                                    <button type="submit" onsubmit="return confirm('Are You Sure ?');"
-                                                        class="btn btn-sm btn-outline-danger">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center">
-                                                Data data belum Tersedia.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                          </div>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex justify-content-between mb-3">
+            <h3>Data Komponen</h3>
+            <a href="{{ route('komponen.create') }}" class="btn btn-primary">Tambah Komponen</a>
         </div>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Nama Komponen</th>
+                    <th>Stok</th>
+                    <th>Harga</th>
+                    <th>Kategori</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($komponen as $k)
+                    <tr>
+                        <td>{{ $k->nama_komponen }}</td>
+                        <td>{{ $k->stok }}</td>
+                        <td>Rp {{ number_format($k->harga) }}</td>
+                        <td>{{ $k->kategori->nama_kategori }}</td>
+                        <td>
+                            <a href="{{ route('komponen.show', $k->id) }}" class="btn btn-info btn-sm">Show</a>
+                            <a href="{{ route('komponen.edit', $k->id) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                            <form action="{{ route('komponen.destroy', $k->id) }}" method="POST" class="d-inline">
+                                @csrf @method('DELETE')
+                                <button onclick="return confirm('Yakin?')" class="btn btn-danger btn-sm">
+                                    Hapus
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 @endsection

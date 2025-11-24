@@ -7,7 +7,7 @@
                 <h4>Detail Kategori</h4>
             </div>
             <div class="card-body">
-                <p><strong>Kategori:</strong> {{ $pelanggan->nama_kategori }}</p>
+                <p><strong>Kategori:</strong> {{ $kategori->nama_kategori }}</p>
                 <a href="{{ route('kategori.index') }}" class="btn btn-secondary">Kembali</a>
             </div>
         </div>

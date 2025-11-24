@@ -1,49 +1,43 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Daftar Kategori</h3>
-            <a href="{{ route('kategori.create') }}" class="btn btn-primary"> Tambah Data Kategori</a>
-        </div>
+<div class="container mt-4">
 
-        @if (session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
-        @endif
-
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Kategori</th>
-
-                </tr>
-            </thead>
-            <tbody>
-                @php $no = 1; @endphp
-                @forelse ($kategori as $data)
-                    <tr>
-                        <td>{{ $no++ }}</td>
-                        <td>{{ $data->nama_kategori }}</td>
-
-                        <td>
-                            <form action="{{ route('kategori.destroy', $data->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <a href="{{ route('kategori.show', $data->id) }}" class="btn btn-sm btn-outline-dark">Show</a>
-                                <a href="{{ route('kategori.edit', $data->id) }}"
-                                    class="btn btn-sm btn-outline-success">Edit</a>
-                                <button type="submit" onsubmit="return confirm('Are You Sure ?');"
-                                    class="btn btn-sm btn-danger">Delete</button>
-                        </td>
-                        </form>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="text-center">Belum ada data kategori</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="d-flex justify-content-between mb-3">
+        <h3>Kategori Komponen</h3>
+        <a href="{{ route('kategori.create') }}" class="btn btn-primary">Tambah Kategori</a>
     </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Kategori Komponen</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach ($kategori as $k)
+                    <tr>
+                        <td>{{ $k->id }}</td>
+                        <td>{{ $k->nama_kategori }}</td>
+                        <td>
+                            <a href="{{ route('kategori.show', $k->id) }}" class="btn btn-info btn-sm">Show</a>
+                            <a href="{{ route('kategori.edit', $k->id) }}" class="btn btn-warning btn-sm">Edit</a>
+
+                            <form action="{{ route('kategori.destroy', $k->id) }}" method="POST" class="d-inline">
+                                @csrf @method('DELETE')
+                                <button onclick="return confirm('Apakah Anda Yakin Menghapus Data ini)" class="btn btn-danger btn-sm">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>                    
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 @endsection
