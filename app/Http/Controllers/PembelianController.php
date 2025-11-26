@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pembelian;
 use App\Models\Supplier;
+use App\Models\Komponen;
 use Illuminate\Http\Request;
 
 class PembelianController extends Controller
@@ -24,7 +25,8 @@ class PembelianController extends Controller
     {
         $supplier = Supplier::all();
         $pembelian = Pembelian::all();
-        return view('pembelian.create', compact('supplier','pembelian'));
+        $komponen = Komponen::all();
+        return view('pembelian.create', compact('supplier','pembelian','komponen'));
     }
 
     /**
@@ -36,9 +38,45 @@ class PembelianController extends Controller
             'kode_pembelian' => 'required|unique:pembelians',
             'tanggal' => 'required|date',
             'supplier_id' => 'required',
+            'id_komponen' => 'required|array',
+            'id_komponen.*' => 'required|exists:komponens,id',
+            'jumlah.*' => 'required|numeric',
+            'subtotal.*' => 'required|numeric',
         ]);
 
-        Pembelian::create($request->all());
+        $totalJumlah = array_sum($request->jumlah ?? []);
+        $totalHarga = 0;
+        $komponenPivot = [];
+
+        foreach ($request->id_komponen ?? [] as $index => $komponenId) {
+            $komponenModel = Komponen::find($komponenId);
+            if (! $komponenModel) {
+                continue;
+            }
+
+            $jumlah = (int) ($request->jumlah[$index] ?? 0);
+            $subtotal = $komponenModel->harga * $jumlah;
+            $totalHarga += $subtotal;
+
+            $komponenPivot[$komponenId] = [
+                'jumlah' => $jumlah,
+                'sub_total' => $subtotal,
+            ];
+        }
+
+        // Create single Pembelian record using kode_pembelian from the request
+        $pembelian = Pembelian::create([
+            'kode_pembelian' => $request->kode_pembelian,
+            'tanggal' => $request->tanggal ?? now(),
+            'supplier_id' => $request->supplier_id,
+            'jumlah' => $totalJumlah,
+            'total_harga' => $totalHarga,
+        ]);
+
+        // If a relationship exists, attach pivot data (this is safe if the relation method exists)
+        if (! empty($komponenPivot) && method_exists($pembelian, 'komponens')) {
+            $pembelian->komponens()->attach($komponenPivot);
+        }
 
         return redirect()->route('pembelian.index')->with('success', 'Data Pembelian berhasil ditambahkan!');
     }
@@ -51,15 +89,11 @@ class PembelianController extends Controller
         $pembelian = Pembelian::with('supplier', 'detail_pembelian')->findOrFail($pembelian->id);
         return view('pembelian.show', compact('pembelian'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Pembelian $pembelian)
     {
         $pembelian = Pembelian::findOrFail($pembelian->id);
         $supplier = Supplier::all();
-        return view('pembelian.edit', compact('pembelian, supplier'));
+        return view('pembelian.edit', compact('pembelian', 'supplier'));
     }
 
     /**

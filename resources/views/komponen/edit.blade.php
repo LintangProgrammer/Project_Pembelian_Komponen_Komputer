@@ -52,6 +52,7 @@
                                         {{ $prod->nama_komponen }} - Rp{{ number_format($prod->harga, 0, ',', '.') }}
                                     </option>
                                 @endforeach
+
                             </select>
                         </div>
 

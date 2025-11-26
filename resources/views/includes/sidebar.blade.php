@@ -93,13 +93,6 @@
             </a>
         </li>
 
-        <li class="menu-item">
-            <a href="detail_pembelian" class="menu-link">
-                <i class="menu-icon tf-icons bx bx-table"></i>
-                <div data-i18n="Tables">Detail Pembelian</div>
-            </a>
-        </li>
-
 
         <!-- Layouts -->
         <li class="menu-item">

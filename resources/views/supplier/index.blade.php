@@ -23,7 +23,6 @@
 
             <tbody>
                 @foreach ($supplier as $s )
-                <td>{{ $s->id }}</td>
                 <td>{{ $s->nama_supplier }}</td>
                 <td>{{ $s->alamat }}</td>
                 <td>{{ $s->telepon }}</td>

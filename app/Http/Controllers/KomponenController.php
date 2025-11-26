@@ -36,14 +36,15 @@ class KomponenController extends Controller
 
     public function show($id)
     {
-        $komponen = Komponen::with(['kategoris'])->findOrFail($id);
+        $komponen = Komponen::with(['kategori'])->findOrFail($id);
         return view('komponen.show', compact('komponen'));
     }
 
     public function edit($id)
     {
-        $komponen = Komponen::with('kategoris')->findOrFail($id);
-        return view('komponen.edit', compact('komponen', 'pelanggan', 'produk'));
+        $kategori = Kategori::all();
+        $komponen = Komponen::with('kategori')->findOrFail($id);
+        return view('komponen.edit', compact('komponen','kategori'));
     }
 
     public function update(Request $request, $id)
