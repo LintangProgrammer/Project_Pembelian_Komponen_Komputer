@@ -24,7 +24,7 @@
                     <tbody>
                         @foreach($pembelian as $p)
                             <tr>
-                                <td>{{ $p->nama_supplier }}</td>
+                                <td>{{ $p->supplier->nama_supplier }}</td>
                                 <td>{{ $p->kode_pembelian }}</td>
                                 <td>{{ $p->tanggal }}</td>
                                 <td>{{ $p->jumlah }}</td>
@@ -36,7 +36,8 @@
 
                                     <form action="{{ route('pembelian.destroy', $p->id) }}" method="POST" class="d-inline">
                                         @csrf @method('DELETE')
-                                        <button onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data ini?')" class="btn btn-danger btn-sm">
+                                        <button onclick="return confirm('Apakah Anda Yakin Ingin Menghapus Data ini?')"
+                                            class="btn btn-danger btn-sm">
                                             Delete
                                         </button>
                             </tr>

@@ -24,7 +24,7 @@
                     {{-- Pilih Pelanggan --}}
                     <div class="mb-3">
                         <label for="nama_supplier" class="form-label">Pelanggan</label>
-                        <select name="nama_supplier" id="supplier_id" class="form-select" required>
+                        <select name="supplier_id" id="nama_supplier" class="form-select" required>
                             <option value="">-- Pilih Pelanggan --</option>
                             @foreach ($supplier as $p)
                                 <option value="{{ $p->id }}">{{ $p->nama_supplier }}</option>

@@ -14,13 +14,12 @@ class Pembelian extends Model
         'jumlah',
     ];
 
+public function komponen()
+{
+    return $this->belongsToMany(Komponen::class, 'detail_pembelians', 'pembelian_id', 'komponen_id')
+                ->withPivot('jumlah', 'subtotal');
+}
 
-    public function komponen()
-    {
-        return $this->belongsToMany(Komponen::class, 'detail_pembelians', 'pembelian_id', 'komponen_id')
-                    ->withPivot('jumlah', 'subtotal')
-                    ->withTimestamps();
-    }
 
     public function supplier()
     {
