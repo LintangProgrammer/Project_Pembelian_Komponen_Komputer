@@ -28,7 +28,7 @@
                                 <td>{{ $p->kode_pembelian }}</td>
                                 <td>{{ $p->tanggal }}</td>
                                 <td>{{ $p->jumlah }}</td>
-                                <td class="text-end">Rp {{ number_format($p->subtotal, 0, ',', '.') }}</td>
+                                <td class="text-end">Rp {{ number_format($p->subrotal, 0, ',', '.') }}</td>
                                 <td>{{ $p->nama_komponen}}</td>
                                 <td>
                                     <a href="{{ route('pembelian.show', $p->id) }}" class="btn btn-info btn-sm">Show</a>

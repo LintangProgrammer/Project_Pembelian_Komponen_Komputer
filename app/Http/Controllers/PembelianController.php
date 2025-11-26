@@ -38,7 +38,6 @@ class PembelianController extends Controller
             'kode_pembelian' => 'required|unique:pembelians',
             'tanggal' => 'required|date',
             'supplier_id' => 'required',
-            'id_komponen' => 'required|array',
             'id_komponen.*' => 'required|exists:komponens,id',
             'jumlah.*' => 'required|numeric',
             'subtotal.*' => 'required|numeric',
@@ -70,8 +69,7 @@ class PembelianController extends Controller
             'tanggal' => $request->tanggal ?? now(),
             'supplier_id' => $request->supplier_id,
             'jumlah' => $totalJumlah,
-            'total_harga' => $totalHarga,
-        ]);
+            'total_harga' => $totalHarga;
 
         // If a relationship exists, attach pivot data (this is safe if the relation method exists)
         if (! empty($komponenPivot) && method_exists($pembelian, 'komponens')) {
