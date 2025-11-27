@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-   Schema::create('kategoris', function (Blueprint $table) {
+       Schema::create('details_pembelians', function (Blueprint $table) {
     $table->id();
-    $table->string('nama_kategori');
+    $table->foreignId('pembelian_id')->constrained('pembelians')->cascadeOnDelete();
+    $table->foreignId('komponen_id')->constrained('komponens')->cascadeOnDelete();
+    $table->integer('jumlah');
+    $table->integer('subtotal');
     $table->timestamps();
-});
- 
+        });
     }
 
     /**
@@ -24,9 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kategoris');
+        Schema::dropIfExists('detail_pembelians');
     }
 };
-
-
-

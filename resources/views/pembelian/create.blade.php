@@ -20,122 +20,87 @@
             <div class="card-body">
                 <form action="{{ route('pembelian.store') }}" method="POST">
                     @csrf
-
-                    {{-- Pilih Pelanggan --}}
-                    <div class="mb-3">
-                        <label for="nama_supplier" class="form-label">Pelanggan</label>
-                        <select name="supplier_id" id="nama_supplier" class="form-select" required>
-                            <option value="">-- Pilih Pelanggan --</option>
-                            @foreach ($supplier as $p)
-                                <option value="{{ $p->id }}">{{ $p->nama_supplier }}</option>
+                    <div class="mb-4">
+                        <label>Supplier</label>
+                        <select name="supplier_id" class="border p-2 w-full" required>
+                            @foreach($supplier as $s)
+                                <option value="{{ $s->id }}">{{ $s->nama_supplier }}</option>
                             @endforeach
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="kode_pembelian" class="form-label">Kode</label>
-                        <input type="text" class="form-control" name="kode_pembelian" id="kode_pembelian">
+                    <div class="mb-4">
+                        <label>Tanggal</label>
+                        <input type="date" name="tanggal" value="{{ date('Y-m-d') }}" required class="border p-2 w-full">
                     </div>
 
-                    <div class="mb-3">
-                        <label for="tanggal" class="form-label">Tanggal</label>
-                        <input type="date" class="form-control" name="tanggal" id="tanggal" value="{{ date('Y-m-d') }}" required>
-                    </div>
+                    <table class="w-full border" id="itemTable">
+                        <thead class="bg-gray-200">
+                            <tr>
+                                <th class="p-2">Komponen</th>
+                                <th class="p-2">Harga</th>
+                                <th class="p-2">Jumlah</th>
+                                <th class="p-2">Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="item-row">
+                                <td>
+                                    <select name="items[0][komponen_id]" class="komponen-select border w-full p-2" required>
+                                        <option value="">Pilih Komponen</option>
+                                        @foreach($komponen as $k)
+                                            <option value="{{ $k->id }}" data-harga="{{ $k->harga }}">
+                                                {{ $k->nama_komponen }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td><input type="text" class="harga border w-full p-2" readonly></td>
+                                <td><input type="number" name="items[0][jumlah]" class="jumlah border w-full p-2" min="1" required></td>
+                                <td><input type="text" class="subtotal border w-full p-2" readonly></td>
+                                <td><button type="button" class="text-red-600 remove-row">Hapus</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
 
-                    <hr>
-
-                    <h5>Daftar Produk</h5>
-
-                    {{-- Wrapper Produk --}}
-                    <div id="komponen-wrapper">
-                        <div class="row komponen-item mb-3">
-                            <div class="col-md-5">
-                                <label class="form-label">Komponen</label>
-                                <select name="nama_komponen" class="form-select komponen-select" required>
-                                    <option value="">-- Pilih Komponen --</option>
-                                    @foreach ($komponen as $k)
-                                        <option value="{{ $k->id }}" data-harga="{{ $k->harga }}">
-                                            {{ $k->nama_komponen }} - Rp{{ number_format($k->harga, 0, ',', '.') }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label">Jumlah</label>
-                                <input type="number" name="jumlah[]" class="form-control jumlah-input" min="1" value="1"
-                                    required>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label class="form-label">Subtotal</label>
-                                <input type="text" name="subtotal[]" class="form-control subtotal" readonly value="Rp0">
-                            </div>
-
-                            <div class="col-md-1 d-flex align-items-end">
-                                <button type="button" class="btn btn-danger btn-remove w-100">×</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="text-end mb-3">
-                        <button type="button" class="btn btn-sm btn-secondary" id="btn-add">+ Tambah Produk</button>
-                    </div>
-
-                    <div class="text-end mb-4">
-                        <h5>Total Harga: <span id="totalHarga">Rp0</span></h5>
-                    </div>
-
-                    <div class="text-end">
-                        <button type="submit" class="btn btn-primary btn-sm">Simpan Transaksi</button>
-                    </div>
+                    <button type="button" id="addRow" class="mt-2 bg-blue-600 text-white px-4 py-2">+ Tambah Item</button>
+                    <button type="submit" class="mt-4 bg-green-600 text-white px-6 py-2">Simpan Pembelian</button>
                 </form>
-            </div>
-        </div>
-    </div>
 
-    {{-- Script JS --}}
-    <script>
-        function hitungSubtotal() {
-            let total = 0;
-            document.querySelectorAll('.komponen-item').forEach(item => {
-                let select = item.querySelector('.komponen-select');
-                let jumlah = item.querySelector('.jumlah-input');
-                let subtotalInput = item.querySelector('.subtotal');
+                <script>
+                    let index = 1;
+                    document.getElementById('addRow').onclick = function () {
+                        const table = document.getElementById('itemTable').getElementsByTagName('tbody')[0];
+                        const row = table.querySelector('.item-row').cloneNode(true);
+                        row.querySelectorAll('input, select').forEach(el => {
+                            el.name = el.name.replace(/\[\d+\]/, '[' + index + ']');
+                            el.value = '';
+                        });
+                        table.appendChild(row);
+                        index++;
+                    };
 
-                let harga = select.selectedOptions[0]?.getAttribute('data-harga') || 0;
-                let sub = parseInt(harga) * parseInt(jumlah.value || 0);
+                    document.addEventListener('change', function (e) {
+                        if (e.target.classList.contains('komponen-select')) {
+                            const harga = e.target.selectedOptions[0].dataset.harga;
+                            e.target.closest('tr').querySelector('.harga').value = harga;
+                        }
+                    });
 
-                subtotalInput.value = 'Rp' + sub.toLocaleString('id-ID');
-                total += sub;
-            });
+                    document.addEventListener('input', function (e) {
+                        if (e.target.classList.contains('jumlah')) {
+                            const row = e.target.closest('tr');
+                            const harga = row.querySelector('.harga').value;
+                            const jumlah = e.target.value;
+                            row.querySelector('.subtotal').value = harga * jumlah;
+                        }
+                    });
 
-            document.getElementById('totalHarga').innerText = 'Rp' + total.toLocaleString('id-ID');
-        }
-
-        document.addEventListener('input', hitungSubtotal);
-        document.addEventListener('change', hitungSubtotal);
-
-        // Tambah komponen baru
-        document.getElementById('btn-add').addEventListener('click', function () {
-            let wrapper = document.getElementById('komponen-wrapper');
-            let newRow = wrapper.firstElementChild.cloneNode(true);
-
-            newRow.querySelectorAll('input').forEach(i => i.value = i.classList.contains('jumlah-input') ? 1 : 'Rp0');
-            newRow.querySelector('.komponen-select').value = '';
-
-            wrapper.appendChild(newRow);
-        });
-
-        // Hapus komponen
-        document.addEventListener('click', function (e) {
-            if (e.target.classList.contains('btn-remove')) {
-                let items = document.querySelectorAll('.komponen-item');
-                if (items.length > 1) {
-                    e.target.closest('.komponen-item').remove();
-                    hitungSubtotal();
-                }
-            }
-        });
-    </script>
+                    document.addEventListener('click', function (e) {
+                        if (e.target.classList.contains('remove-row') && document.querySelectorAll('.item-row').length > 1) {
+                            e.target.closest('tr').remove();
+                        }
+                    });
+                </script>
 @endsection

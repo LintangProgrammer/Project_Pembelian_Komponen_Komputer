@@ -27,9 +27,16 @@
                                 <td>{{ $p->supplier->nama_supplier }}</td>
                                 <td>{{ $p->kode_pembelian }}</td>
                                 <td>{{ $p->tanggal }}</td>
-                                <td>{{ $p->jumlah }}</td>
-                                <td class="text-end">Rp {{ number_format($p->subrotal, 0, ',', '.') }}</td>
-                                <td>{{ $p->nama_komponen}}</td>
+                                <td>{{ $p->detailpembelian->sum('jumlah') }}</td>  
+                                <td class="text-end">
+                                    Rp {{ number_format($p->detailpembelian->sum('subtotal'), 0, ',', '.') }}
+                                </td>
+                                <td>
+                                    <ul>
+                                        @foreach($p->detailpembelian as $detail)
+                                            <li>{{ $detail->komponen->nama_komponen ?? '-' }}</li>
+                                        @endforeach
+                                    </ul>
                                 <td>
                                     <a href="{{ route('pembelian.show', $p->id) }}" class="btn btn-info btn-sm">Show</a>
                                     <a href="{{ route('pembelian.edit', $p->id) }}" class="btn btn-warning btn-sm">Edit</a>

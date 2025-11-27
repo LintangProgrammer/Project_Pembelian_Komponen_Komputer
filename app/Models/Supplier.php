@@ -8,9 +8,7 @@ class Supplier extends Model
 {
     protected $table = 'suppliers';
     protected $fillable = ['nama_supplier', 'alamat', 'telepon'];
+    public function pembelian() { return $this->hasMany(Pembelian::class); 
+}
 
-    public function pembelian()
-    {
-        return $this->hasMany(Pembelian::class, 'supplier_id');
-    }
 }
